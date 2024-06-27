@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {plan.plan.map((race: any) => (
+          {(plan.plan as any).map((race: any) => (
             <TableRow key={race.day + race.week}>
               <TableCell>{race.week}</TableCell>
               <TableCell className="font-medium">{race.day}</TableCell>
