@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { type DayContentProps } from "react-day-picker";
 
 import { DayPicker } from "react-day-picker";
 
@@ -12,39 +11,16 @@ import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 dayjs.extend(weekOfYear);
 
-type PlanProps = {
-  plan: any;
-  raceDate: Date;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  size: string;
 };
-
-export type CalendarProps = React.ComponentProps<typeof DayPicker> & PlanProps;
-
-function DayContent({ date, raceDate, plan }: DayContentProps & PlanProps) {
-  const currentDate = dayjs(date);
-  const raceDay = dayjs(raceDate);
-  const lengthOfPlan = Math.max(...plan.map((activity: any) => activity.week));
-  const weekOffset = raceDay.week() - lengthOfPlan;
-
-  const dateActivity = plan.find(
-    (activity: any) =>
-      activity.day === currentDate.day() &&
-      activity.week === currentDate.week() - weekOffset,
-  );
-
-  return (
-    <div>
-      <div className="text-sm">{date.getDate()}</div>
-      {dateActivity && <div className="text-sm">{dateActivity.details}</div>}
-    </div>
-  );
-}
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  plan,
-  raceDate,
+  components,
+  size = "8",
   ...props
 }: CalendarProps) {
   return (
@@ -65,8 +41,7 @@ function Calendar({
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
-        head_cell:
-          "text-muted-foreground rounded-md w-32 font-normal text-[1.0rem]",
+        head_cell: `text-muted-foreground rounded-md w-${size} font-normal text-[1.0rem]`,
         row: "flex w-full mt-2",
         cell: cn(
           "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md",
@@ -76,7 +51,7 @@ function Calendar({
         ),
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-32 w-32 p-4 font-normal items-center justify-center aria-selected:opacity-100",
+          `h-${size} w-${size} p-4 font-normal items-center justify-center aria-selected:opacity-100`,
         ),
         day_range_start: "day-range-start",
         day_range_end: "day-range-end",
@@ -94,9 +69,7 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeftIcon className="h-4 w-4" />,
         IconRight: () => <ChevronRightIcon className="h-4 w-4" />,
-        DayContent: ({ ...props }) => (
-          <DayContent raceDate={raceDate} plan={plan} {...props} />
-        ),
+        ...components,
       }}
       {...props}
     />

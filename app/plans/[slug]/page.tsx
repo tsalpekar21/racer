@@ -7,9 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PrismaClient } from "@prisma/client";
-import { Calendar } from "@/components/ui/calendar";
-const prisma = new PrismaClient();
+import { RunCalendar } from "./components/run-calendar";
+import { Activity } from "./components/activity";
+import prisma from "@/lib/primsa";
+import dayjs from "dayjs";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -22,15 +23,58 @@ export default async function Page({ params }: { params: { slug: string } }) {
     return <div>Plan not found</div>;
   }
 
-  return (
-    <div className="p-8">
-      <Calendar
-        plan={plan.plan}
-        raceDate={new Date("2024-10-13")}
-        className="flex justify-center flex-grow bg-zinc-950 w-full"
-      />
+  const raceDate = dayjs("2024-10-13");
+  const currentDate = dayjs();
+  const lengthOfPlan = Math.max(
+    ...(plan.plan as any).map((activity: any) => activity.week),
+  );
+  const weekOffset = raceDate.week() - lengthOfPlan;
+  const todaysActivity = (plan.plan as any).find(
+    (activity: any) =>
+      activity.day === currentDate.day() &&
+      activity.week === currentDate.week() - weekOffset,
+  );
+  const upcomingActivities = (plan.plan as any)
+    .filter(
+      (activity: any) =>
+        activity.week >= currentDate.week() - weekOffset &&
+        activity.day >= currentDate.day(),
+    )
+    .slice(0, 3);
 
-      <Table className="mt-16">
+  return (
+    <div className="p-4 grid grid-cols-1 sm:grid-cols-4 sm:gap-4">
+      <div className="hidden sm:grid sm:col-span-3">
+        <h3>Calendar</h3>
+        <RunCalendar
+          plan={plan.plan}
+          weekOffset={weekOffset}
+          className="bg-zinc-950 w-full"
+        />
+      </div>
+
+      <div className="col-span-1">
+        <h3 className="mb-4 w-full">{"Today's Activity"}</h3>
+        <Activity
+          title={todaysActivity.type}
+          details={todaysActivity.details}
+          day={todaysActivity.day}
+          week={todaysActivity.week + weekOffset}
+        />
+        <h3 className="mt-4 w-full">{"Upcoming Activities"}</h3>
+        {upcomingActivities.map((activity: any) => (
+          <Activity
+            className="my-4"
+            key={activity.day + activity.week}
+            title={activity.type}
+            details={activity.details}
+            day={activity.day}
+            week={activity.week + weekOffset}
+          />
+        ))}
+      </div>
+
+      {/* <Table className="mt-16">
         <TableCaption>Training Plan</TableCaption>
         <TableHeader>
           <TableRow>
@@ -50,7 +94,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table> */}
     </div>
   );
 }

@@ -1,9 +1,8 @@
 "use server";
 import OpenAI from "openai";
-import { PrismaClient } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { NOVICE_2_TRAINING_PLAN } from "@/lib/run";
-const prisma = new PrismaClient();
+import prisma from "@/lib/primsa";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function extractTrainingPlan(formData: FormData) {
