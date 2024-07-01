@@ -28,10 +28,15 @@ export function Activity({
   const activityDate = dayjs().day(day).week(week);
   return (
     <Card {...props}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{details}</CardDescription>
-        <div>{activityDate.format("ddd | MMMM D")}</div>
+      <CardHeader className="flex flex-row justify-between">
+        <div>
+          <h3 className="font-semibold leading-none tracking-tight">{title}</h3>
+          <span className="text-sm text-muted-foreground">{details}</span>
+        </div>
+        <div className="flex flex-row items-center">
+          <Separator orientation="vertical" className="mr-4" />
+          {activityDate.format("ddd, MMMM D")}
+        </div>
       </CardHeader>
     </Card>
   );

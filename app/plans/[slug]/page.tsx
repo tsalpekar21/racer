@@ -9,13 +9,14 @@ import {
 } from "@/components/ui/table";
 import { RunCalendar } from "./components/run-calendar";
 import { Activity } from "./components/activity";
-import prisma from "@/lib/primsa";
+import primda from "@/lib/primsa";
 import dayjs from "dayjs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const { slug } = params;
 
-  const plan = await prisma.siteTrainingPlan.findUnique({
+  const plan = await primda.siteTrainingPlan.findUnique({
     where: { slug },
   });
 
@@ -40,11 +41,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
         activity.week >= currentDate.week() - weekOffset &&
         activity.day >= currentDate.day(),
     )
-    .slice(0, 3);
+    .slice(0, 6);
 
   return (
-    <div className="p-4 grid grid-cols-1 sm:grid-cols-4 sm:gap-4">
-      <div className="hidden sm:grid sm:col-span-3">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-4 md:gap-4">
+      <div className="hidden md:block md:col-span-3">
         <h3>Calendar</h3>
         <RunCalendar
           plan={plan.plan}
@@ -74,7 +75,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         ))}
       </div>
 
-      {/* <Table className="mt-16">
+      {/* {/* <Table className="mt-16">
         <TableCaption>Training Plan</TableCaption>
         <TableHeader>
           <TableRow>

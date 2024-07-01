@@ -26,7 +26,7 @@ function DayContent({ date, weekOffset, plan }: DayContentProps & PlanProps) {
   );
 
   return (
-    <div>
+    <div className="p-6">
       <div className="text-sm">{date.getDate()}</div>
       {dateActivity && <div className="text-sm">{dateActivity.details}</div>}
     </div>
@@ -48,9 +48,8 @@ export function RunCalendar({
     <Calendar
       className="w-full"
       components={components}
-      size="24"
+      size="32"
       classNames={{
-        months: "space-y-4 sm:space-x-4 sm:space-y-0",
         nav: "space-x-1",
         head_row: "",
         row: "w-full mt-2",
